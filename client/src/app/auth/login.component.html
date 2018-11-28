@@ -1,0 +1,27 @@
+<div class="auth-page">
+    <div class="container page">
+        <div class="row">
+  
+            <div class="col-md-12 col-xs-12">
+            <h1 class="text-xs-center">{{ title }}</h1>
+                <p class="text-xs-center">
+                    <a [routerLink]="['/login']" *ngIf="authType == 'register'">Have an account?</a>
+                    <a [routerLink]="['/register']" *ngIf="authType == 'login'">Need an account?</a>
+                </p>
+            <app-list-errors [errors]="errors"></app-list-errors>
+            <form class="authForm" [formGroup]="authForm" (ngSubmit)="submitForm()">
+                <mat-form-field class="half-width">
+                    <input formControlName="email" matInput placeholder="Email *">
+                </mat-form-field>
+                <mat-form-field class="half-width">
+                    <input formControlName="password" type="password" matInput placeholder="Password *">
+                </mat-form-field>
+                <div class="full-width">
+                    <button class="btn btn-lg btn-primary pull-xs-right" [disabled]="!authForm.valid" type="submit">
+                        Login
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
