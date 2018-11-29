@@ -51,13 +51,7 @@ module.exports = function (passport) {
                         sql.insertUser(newUser, function (rows) {  
                             if (rows) {
                                 //Object containing data used in the profile page is send
-                                let logged =  {
-                                    email: newUser.email,
-                                    first_name: newUser.first_name,
-                                    token: newUser.user_id,
-                                    image:'https://robohash.org/fd'
-                                };
-                                return done(null, logged);
+                                return done(null, newUser);
                             }
                         });
                     }
@@ -88,5 +82,6 @@ module.exports = function (passport) {
                 }
             });
         }));//LocalStrategy ends
+        
 
 };

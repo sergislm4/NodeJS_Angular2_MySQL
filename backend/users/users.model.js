@@ -61,6 +61,20 @@ usersModel.getUserLogged = function (token, callback){
     }
 };
 
+usersModel.getProfileData = function (token, callback){
+    if(mysql.connection){
+        mysql.connection.query('SELECT * FROM users WHERE user_id LIKE ?', [token],
+        function (error, rows){
+            if (error){
+              console.log('error');
+              throw error;
+            }else{
+              callback(null,rows);
+            }
+        });
+    }
+};
+
 usersModel.signupUser = function (data, callback){
   if (mysql.connection) {
         mysql.connection.query('SELECT COUNT(*) FROM users WHERE email LIKE ?', [data.email],
@@ -72,16 +86,43 @@ usersModel.signupUser = function (data, callback){
                 callback(rows);
               }else{
                 if (mysql.connection) {
-                    mysql.connection.query('INSERT INTO users SET ?', [data], function(err, result) {
+                    mysql.connection.query('INSERT INTO users SET ?', [data], function(err) {
                         if(err){
                             throw err;
                         }else{
-                            // callback(result);
                             callback(rows);
                         }
                     });
                 }
               }
+                callback(rows);
+            }
+        });
+    }
+};
+
+usersModel.updateUser = function (data, callback){
+    if(mysql.connection){
+        mysql.connection.query('UPDATE users SET ? WHERE email LIKE ?', [data, data.email],
+        function (error, rows){
+            if (error){
+                console.log('error');
+                throw error;
+            }else{
+                callback(rows);
+            }
+        });
+    }
+};
+
+usersModel.setAvatar = function (avatar, token, callback){
+    if(mysql.connection){
+        mysql.connection.query('UPDATE users SET avatar=? WHERE user_id LIKE ?', [avatar, token],
+        function (error, rows){
+            if (error){
+                console.log('error');
+                throw error;
+            }else{
                 callback(rows);
             }
         });
