@@ -6,7 +6,7 @@
         <h1 class="text-xs-center">Your Settings</h1>
 
         <app-list-errors [errors]="errors"></app-list-errors>
-
+        <img [src]="'assets/bg_big.08930cbba28286e491f8.png'" class="user-img" />
         <form [formGroup]="settingsForm" (ngSubmit)="submitForm()">
           <fieldset [disabled]="isSubmitting">
 

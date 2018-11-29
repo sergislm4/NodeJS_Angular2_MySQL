@@ -19,7 +19,7 @@ export class ApiService {
   }
 
   get(path: string, params: HttpParams = new HttpParams()): Observable<any> {
-    return this.http.get(`${environment.api_url}${path}`, { params })
+    return this.http.get(`${environment.api_url}${path}`, { headers: {Authorization: '' + this.jwtService.getToken()} })
       .pipe(catchError(this.formatErrors));
   }
 

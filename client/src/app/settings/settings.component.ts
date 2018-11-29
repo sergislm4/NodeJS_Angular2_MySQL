@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 
 import { User, UserService } from '../core';
 
+import { ToastrManager } from 'ng6-toastr-notifications';
+
 @Component({
   selector: 'app-settings-page',
   templateUrl: './settings.component.html'
@@ -17,7 +19,8 @@ export class SettingsComponent implements OnInit {
   constructor(
     private router: Router,
     private userService: UserService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public toastr: ToastrManager
   ) {
     // create form group using the form builder
     this.settingsForm = this.fb.group({
@@ -50,10 +53,13 @@ export class SettingsComponent implements OnInit {
     this.userService
     .update(this.user)
     .subscribe(
-      updatedUser => this.router.navigateByUrl('/profile/' + updatedUser.email),
+      updatedUser => {
+        this.toastr.successToastr('Your profile has been updated successfully.', 'Success!');
+      },
       err => {
         this.errors = err;
         this.isSubmitting = false;
+        this.toastr.errorToastr('There was an error with your request, try again later!', 'Oops!');
       }
     );
   }

@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DropzoneComponent , DropzoneDirective,
-  DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
 import { Errors, UserService } from '../core';
+import {  FileUploader, FileSelectDirective } from 'ng2-file-upload/ng2-file-upload';
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-auth-page',
@@ -20,21 +21,9 @@ export class AuthComponent implements OnInit {
   defaultVat = '0';
   priceMin10 = true;
   defaultChecked = true;
+  hide = true;
+  public uploader: FileUploader = new FileUploader({url:`${environment.api_url}/setAvatar`, itemAlias: 'photo'});
 
-  public type: string = 'component';
-
-  public disabled: boolean = false;
-
-  public config: DropzoneConfigInterface = {
-    clickable: true,
-    maxFiles: 1,
-    autoReset: null,
-    errorReset: null,
-    cancelReset: null
-  };
-
-  @ViewChild(DropzoneComponent) componentRef?: DropzoneComponent;
-  @ViewChild(DropzoneDirective) directiveRef?: DropzoneDirective;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -52,6 +41,9 @@ export class AuthComponent implements OnInit {
       'website': [''],
       'currency': ['', Validators.required]
     });
+
+    this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
+
 
     // use FormBuilder to create a form group
     this.appointmentsForm = this.fb.group({
@@ -100,14 +92,6 @@ export class AuthComponent implements OnInit {
       }
     });
   }
-  public onUploadError(args: any): void {
-    console.log('onUploadError:', args);
-  }
-
-  public onUploadSuccess(args: any): void {
-    console.log('onUploadSuccess:', args);
-  }
-
 
   submitForm() {
     this.isSubmitting = true;
@@ -117,7 +101,12 @@ export class AuthComponent implements OnInit {
     this.userService
     .attemptAuth(this.authType, this.authForm.value)
     .subscribe(
-      data => this.router.navigateByUrl('/'),
+      data => {
+        // Image is uploade after the register
+        // That way I can reuse the endpoint at profile to change the avatar
+        this.uploader.uploadAll();
+        this.router.navigateByUrl('/settings')
+      },
       err => {
         this.errors = err;
         this.isSubmitting = false;

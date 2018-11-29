@@ -22,7 +22,8 @@
                 <input formControlName="email" matInput placeholder="Email *">
               </mat-form-field>
               <mat-form-field class="half-width">
-                <input formControlName="password" type="password" matInput placeholder="Password *">
+                <input formControlName="password" matInput placeholder="Password *" [type]="hide ? 'password' : 'text'">
+                <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
               </mat-form-field>
               <mat-form-field class="half-width">
                 <input formControlName="phone" matInput placeholder="Phone *">
@@ -42,8 +43,8 @@
               </mat-form-field>
               <h2 class="full-width">Profile picture</h2> 
               <p class="full-width">Please smile and upload a professional photo of yourself. Make sure your face is clearly visible and that you look as friendly as you can possibly be.</p>
-<!--               <dropzone *ngIf="type === 'component'" class="dropzone-container" [config]="config" [disabled]="disabled" fxLayout="row" fxLayoutAlign="start strech" fxFlex="auto" [message]="'Click or drag images here to upload'" (error)="onUploadError($event)" (success)="onUploadSuccess($event)"></dropzone>
- -->            </form>
+              <input type="file" name="photo" ng2FileSelect [uploader]="uploader" />
+         </form>
           </mat-tab>
           <mat-tab label="Appointments" [disabled]="!authForm.valid">
               <form class="appointmentsForm" [formGroup]="appointmentsForm" (ngSubmit)="submitForm()">

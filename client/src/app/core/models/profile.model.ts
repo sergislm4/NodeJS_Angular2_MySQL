@@ -8,5 +8,4 @@ export interface Profile {
   currency: string;
   city: string;
   avatar: string;
-  user_id: string;
 }

@@ -29,7 +29,9 @@ export class UserService {
     if (this.jwtService.getToken()) {
       this.apiService.get('/user')
       .subscribe(
-        data => this.setAuth(data.user),
+        data => {
+          return this.setAuth(data.user)
+        },
         err => this.purgeAuth()
       );
     } else {
@@ -58,10 +60,10 @@ export class UserService {
 
   attemptAuth(type, credentials): Observable<User> {
     const route = (type === 'login') ? '/login' : '/register';
-    console.log(type);
     return this.apiService.post(route, credentials)
       .pipe(map(
       data => {
+        console.log(data);
         this.setAuth(data);
         return data;
       }
@@ -77,9 +79,11 @@ export class UserService {
     return this.apiService
     .put('/user', { user })
     .pipe(map(data => {
+      // Update users token
+      this.setAuth(data)
       // Update the currentUser observable
-      this.currentUserSubject.next(data.user);
-      return data.user;
+      this.currentUserSubject.next(data);
+      return data;
     }));
   }
 
