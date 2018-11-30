@@ -14,7 +14,6 @@ export class ProfilesService {
   get(): Observable<Profile> {
     return this.apiService.get('/profile')
       .pipe(map((data: {profile: Profile}) => {
-        console.log(data.profile);
         return data.profile;
       }));
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Errors, UserService } from '../core';
@@ -17,13 +17,58 @@ export class AuthComponent implements OnInit {
   isSubmitting = false;
   authForm: FormGroup;
   appointmentsForm: FormGroup;
-  selected = 'EUR';
+  selectedTab = 0;
   defaultVat = '0';
+  defaultPrice = '0';
+  defaultCurrency = 'EUR';
   priceMin10 = true;
+  color = 'warn';
   defaultChecked = true;
+  expandedIST = false;
+  expandedOVS = false;
+  expandedF2F = false;
+  Tax = true;
   hide = true;
+  map = new Map([
+    [1, '10'],
+    [2, '15'],
+    [3, '30'],
+    [4, '45'],
+    [5, '60'],
+    [6, '90'],
+    [7, '120']
+  ]);
   public uploader: FileUploader = new FileUploader({url:`${environment.api_url}/setAvatar`, itemAlias: 'photo'});
 
+  public changeDefaultChecked = function(){
+    (this.defaultChecked) ? this.defaultChecked = false : this.defaultChecked = true;
+  }
+
+  public changeDefaultCurrency = function($event){
+    this.defaultCurrency = $event.value;
+  }
+
+  public changeExpandedIST = function(){
+    (this.expandedIST) ? this.expandedIST = false : this.expandedIST = true;
+  }
+
+  public changeExpandedOVS = function(){
+    (this.expandedOVS) ? this.expandedOVS = false : this.expandedOVS = true;
+  }
+
+  public changeExpandedF2F = function(){
+    (this.expandedF2F) ? this.expandedF2F = false : this.expandedF2F = true;
+  }
+
+  public changeTab = function() {
+    this.selectedTab += 1;
+    if (this.selectedTab >= 2) this.selectedTab = 0;
+  }
+
+  public changeTax = function(){
+    (this.Tax) ? this.Tax = false : this.Tax = true;
+  }
+  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -42,7 +87,10 @@ export class AuthComponent implements OnInit {
       'currency': ['', Validators.required]
     });
 
-    this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
+    this.authForm.get('currency').setValue('EUR');
+    this.uploader.onAfterAddingFile = (file) => { 
+      file.withCredentials = false; 
+    };
 
 
     // use FormBuilder to create a form group
@@ -52,23 +100,7 @@ export class AuthComponent implements OnInit {
       'introductorySessions': [''],
       'introductorySessionsTime': [''],
       'onlineVideoSessions': [''],
-      'onlineVideoSessions10MinPrice': [''],
-      'onlineVideoSessions15MinPrice': [''],
-      'onlineVideoSessions30MinPrice': [''],
-      'onlineVideoSessions45MinPrice': [''],
-      'onlineVideoSessions60MinPrice': [''],
-      'onlineVideoSessions90MinPrice': [''],
-      'onlineVideoSessions120MinPrice': [''],
-      'onlineVideoSessionsDayPrice': [''],
       'FaceToFaceSessions': [''],
-      'FaceToFaceSessions10MinPrice': [''],
-      'FaceToFaceSessions15MinPrice': [''],
-      'FaceToFaceSessions30MinPrice': [''],
-      'FaceToFaceSessions45MinPrice': [''],
-      'FaceToFaceSessions60MinPrice': [''],
-      'FaceToFaceSessions90MinPrice': [''],
-      'FaceToFaceSessions120MinPrice': [''],
-      'FaceToFaceSessionsDayPrice': [''],
       'FaceToFaceSessionsCountry': [''],
       'FaceToFaceSessionsZIP': [''],
       'FaceToFaceSessionsCity': [''],
@@ -78,6 +110,11 @@ export class AuthComponent implements OnInit {
       'marketingAllowed': [''],
       'terms': ['', Validators.required]
     });
+
+    this.appointmentsForm.get('publicPrices').setValue(true);
+    this.appointmentsForm.get('defaultValues').setValue(true);
+    this.appointmentsForm.get('introductorySessionsTime').setValue('10');
+    this.appointmentsForm.get('cancellationPolicy').setValue('Free');
   }
 
   ngOnInit() {
@@ -104,8 +141,9 @@ export class AuthComponent implements OnInit {
       data => {
         // Image is uploade after the register
         // That way I can reuse the endpoint at profile to change the avatar
+        this.uploader.setOptions({ headers: [{name: 'email', value: data.email}]});
         this.uploader.uploadAll();
-        this.router.navigateByUrl('/settings')
+        this.router.navigateByUrl('/profile/'+data.user_id)
       },
       err => {
         this.errors = err;

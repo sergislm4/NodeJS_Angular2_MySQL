@@ -1,21 +1,14 @@
 <div class="settings-page">
-  <div class="container page">
+  <div class="page">
     <div class="row">
       <div class="col-md-6 offset-md-3 col-xs-12">
 
         <h1 class="text-xs-center">Your Settings</h1>
 
         <app-list-errors [errors]="errors"></app-list-errors>
-        <img [src]="'assets/bg_big.08930cbba28286e491f8.png'" class="user-img" />
+        <img [src]="avatar" class="user-img" />
         <form [formGroup]="settingsForm" (ngSubmit)="submitForm()">
           <fieldset [disabled]="isSubmitting">
-
-            <fieldset class="form-group">
-              <input class="form-control"
-                type="text"
-                placeholder="URL of profile picture"
-                formControlName="avatar" />
-            </fieldset>
 
             <fieldset class="form-group">
               <input class="form-control form-control-lg"

@@ -1,17 +1,12 @@
-<nav class="navbar navbar-light">
-  <div class="container">
-    <a class="navbar-brand" routerLink="/">DerButton Task</a>
-
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="d-flex flex-grow-1">
+    <span class="w-100 d-lg-none d-block"><!-- hidden spacer to center brand on mobile --></span>
+    <a class="navbar-brand d-none d-lg-inline-block" routerLink="/">DerButton Task</a>
+  </div>
+  <div class="collapse navbar-collapse flex-grow-1 text-right">
     <!-- Show this for logged out users -->
     <ul *appShowAuthed="false"
-      class="nav navbar-nav pull-xs-right">
-
-      <li class="nav-item">
-        <a class="nav-link"
-          routerLink="/">
-          Home
-        </a>
-      </li>
+    class="navbar-nav ml-auto flex-nowrap">
 
       <li class="nav-item">
         <a class="nav-link"
@@ -33,7 +28,7 @@
 
     <!-- Show this for logged in users -->
     <ul *appShowAuthed="true"
-      class="nav navbar-nav pull-xs-right">
+    class="navbar-nav ml-auto flex-nowrap">
 
       <li class="nav-item">
         <a class="nav-link"
@@ -56,7 +51,6 @@
         <a class="nav-link"
           [routerLink]="['/profile', currentUser.user_id]"
           routerLinkActive="active">
-          <img [src]="currentUser.avatar" *ngIf="currentUser.avatar" class="user-pic" />
           {{ currentUser.first_name }}
         </a>
       </li>

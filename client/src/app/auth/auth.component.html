@@ -1,5 +1,5 @@
 <div class="auth-page">
-  <div class="container page">
+  <div class="page">
     <div class="row">
 
       <div class="col-md-12 col-xs-12">
@@ -9,7 +9,7 @@
           <a [routerLink]="['/register']" *ngIf="authType == 'login'">Need an account?</a>
         </p>
         <app-list-errors [errors]="errors"></app-list-errors>
-        <mat-tab-group class="col-md-12">
+        <mat-tab-group class="col-md-12" [selectedIndex]="selectedTab">
           <mat-tab label="Profile">
             <form class="authForm" [formGroup]="authForm" (ngSubmit)="submitForm()">
               <mat-form-field class="half-width">
@@ -33,7 +33,7 @@
               </mat-form-field>
               <span class="half-width">My currency is:</span>
               <mat-form-field class="half-width">
-                <mat-select formControlName="currency" [(value)]="selected">
+                <mat-select formControlName="currency" [(value)]="selected" (selectionChange)="changeDefaultCurrency($event)">
                   <mat-option value="EUR">EUR</mat-option>
                   <mat-option value="USD">USD</mat-option>
                   <mat-option value="AUD">AUD</mat-option>
@@ -44,21 +44,26 @@
               <h2 class="full-width">Profile picture</h2> 
               <p class="full-width">Please smile and upload a professional photo of yourself. Make sure your face is clearly visible and that you look as friendly as you can possibly be.</p>
               <input type="file" name="photo" ng2FileSelect [uploader]="uploader" />
+              <div class="full-width">
+                <button class="btn btn-lg btn-primary pull-xs-right" [disabled]="!authForm.valid" type="button" (click)="changeTab()">
+                    Next Step
+                </button>
+              </div> 
          </form>
           </mat-tab>
           <mat-tab label="Appointments" [disabled]="!authForm.valid">
               <form class="appointmentsForm" [formGroup]="appointmentsForm" (ngSubmit)="submitForm()">
-                <h2 class="full-width">My offer</h2> 
-                <p class="full-width">Tell us what you would like to offer to your clients. Set your own prices and decide if you want to offer video sessions or personal face-to-face meetings. It’s all up to you!</p>
-                <mat-slide-toggle formControlName="publicPrices" [checked]="defaultChecked" class="full-width--left">I want to indicate prices and show them publicly</mat-slide-toggle>
+                <h2 class="full-width--left">My offer</h2> 
+                <p class="full-width--left">Tell us what you would like to offer to your clients. Set your own prices and decide if you want to offer video sessions or personal face-to-face meetings. It’s all up to you!</p>
+                <mat-slide-toggle (change)="changeDefaultChecked()" [color]="color" formControlName="publicPrices" [checked]="defaultChecked" class="full-width--left">I want to indicate prices and show them publicly</mat-slide-toggle>
                 <small class="full-width--left">If selected, you can specify your fee below. Prices will be publicly shown on your profile. If you do not indicate any prices, no payments can be processed via DerButton. Scheduling appointments is still always possible.</small>
-                <mat-slide-toggle formControlName="defaultValues" [checked]="defaultChecked" class="full-width--left">I want to use the invoicing and payment solution of DerButton</mat-slide-toggle>
+                <mat-slide-toggle (change)="changeDefaultChecked()" [color]="color" formControlName="defaultValues" [checked]="defaultChecked" class="full-width--left">I want to use the invoicing and payment solution of DerButton</mat-slide-toggle>
                 <small class="full-width--left">Only when prices are indicated, we can automatically handle the payments of your services. If this option is selected, we will automatically issue an invoice in your name, send it to you and your customers, and ensure that your fee is transferred to your bank account.</small>
-                <mat-slide-toggle formControlName="introductorySessions" [checked]="checked" class="full-width--left">I offer free introductory sessions</mat-slide-toggle>
+                <mat-slide-toggle (change)="changeExpandedIST()" [color]="color" formControlName="introductorySessions" [checked]="checked" class="full-width--left">I offer free introductory sessions</mat-slide-toggle>
                 <small class="full-width--left">New customers love to get to know you, especially if a first call is offered at no costs. </small>
-                <div class="full-width--left">
+                <div class="full-width--left" *ngIf="expandedIST == true">
                     <span class="half-width">My free introductory session is:</span>
-                    <mat-form-field class="half-width">
+                    <mat-form-field  class="half-width">
                       <mat-select formControlName="introductorySessionsTime" [(value)]="selected">
                         <mat-option value="10">10 Minutes</mat-option>
                         <mat-option value="15">15 Minutes</mat-option>
@@ -68,152 +73,60 @@
                       </mat-select>
                     </mat-form-field>
                 </div>
-                <mat-slide-toggle formControlName="onlineVideoSessions"  [checked]="checked" class="full-width--left">I offer online video sessions</mat-slide-toggle>
+                <mat-slide-toggle (change)="changeExpandedOVS()" [color]="color" formControlName="onlineVideoSessions"  [checked]="checked" class="full-width--left">I offer online video sessions</mat-slide-toggle>
                 <small class="full-width--left">With DerButton, you have the opportunity to offer video calls without installing any software. If a customer schedules a video call with you, the call opens automatically within your browser on DerButton.com.</small>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">10 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="onlineVideoSessions10MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
+                <div *ngIf="expandedOVS == true">
+                    <div class="full-width--left" *ngFor="let item of map | keyvalue">
+                        <mat-checkbox [color]="color" class="half-width">{{item.value}} Minutes</mat-checkbox>
+                        <mat-form-field *ngIf="defaultChecked == true" class="half-width">
+                            <span matPrefix>{{defaultCurrency}} &nbsp;</span>
+                            <input type="number" matInput placeholder="Price" [value]="defaultPrice">
+                        </mat-form-field>
+                    </div>
                 </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">15 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="onlineVideoSessions15MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">30 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="onlineVideoSessions30MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">45 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="onlineVideoSessions45MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">60 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="onlineVideoSessions60MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">90 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="onlineVideoSessions90MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">120 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="onlineVideoSessions120MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">Whole day</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="onlineVideoSessionsDayPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <mat-slide-toggle formControlName="FaceToFaceSessions" [checked]="checked" class="full-width--left">I offer face-to-face sessions</mat-slide-toggle>
+                <mat-slide-toggle (change)="changeExpandedF2F()" [color]="color" formControlName="FaceToFaceSessions" [checked]="checked" class="full-width--left">I offer face-to-face sessions</mat-slide-toggle>
                 <small class="full-width--left">Also personal meetings can now be booked and paid for online. After your session, we will ask you to confirm the duration of the meeting and the billing takes place automatically.</small>
-                <div class="full-width--left">
-                  <mat-checkbox class="half-width">10 Minutes</mat-checkbox>
-                  <mat-form-field class="half-width">
-                      <span matPrefix>EUR &nbsp;</span>
-                      <input formControlName="FaceToFaceSessions10MinPrice" type="number" matInput placeholder="Price">
-                  </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">15 Minutes</mat-checkbox>
+                <div *ngIf="expandedF2F == true">
+                    <div class="full-width--left" *ngFor="let item of map | keyvalue">
+                        <mat-checkbox [color]="color" class="half-width">{{item.value}} Minutes</mat-checkbox>
+                        <mat-form-field *ngIf="defaultChecked == true" class="half-width">
+                            <span matPrefix>{{defaultCurrency}} &nbsp;</span>
+                            <input type="number" matInput placeholder="Price" [value]="defaultPrice">
+                        </mat-form-field>
+                    </div>
                     <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="FaceToFaceSessions15MinPrice" type="number" matInput placeholder="Price">
+                        <mat-select formControlName="FaceToFaceSessionsCountry" [(value)]="selected" placeholder="Country">
+                            <mat-option value="Austria">Austria</mat-option>
+                            <mat-option value="France">France</mat-option>
+                            <mat-option value="Germany">Germany</mat-option>
+                            <mat-option value="Italy">Italy</mat-option>
+                            <mat-option value="Liechtenstein">Liechtenstein</mat-option>
+                            <mat-option value="Slovakia">Slovakia</mat-option>
+                            <mat-option value="Slovenia">Slovenia</mat-option>
+                            <mat-option value="Spain">Spain</mat-option>
+                            <mat-option value="Switzerland">Switzerland</mat-option>
+                            <mat-option value="UK">United Kingdom of Great Britain and Northern Irland</mat-option>
+                            <mat-option value="US">United States of America</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="half-width">
+                        <input formControlName="FaceToFaceSessionsZIP" matInput placeholder="ZIP">
+                    </mat-form-field>
+                    <mat-form-field class="half-width">
+                        <input formControlName="FaceToFaceSessionsCity" matInput placeholder="City *">
+                    </mat-form-field>
+                    <mat-form-field class="half-width">
+                        <input formControlName="FaceToFaceSessionsAddress" matInput placeholder="Address *">
                     </mat-form-field>
                 </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">30 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="FaceToFaceSessions30MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">45 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="FaceToFaceSessions45MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">60 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="FaceToFaceSessions60MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">90 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="FaceToFaceSessions90MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">120 Minutes</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="FaceToFaceSessions120MinPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <div class="full-width--left">
-                    <mat-checkbox class="half-width">Whole day</mat-checkbox>
-                    <mat-form-field class="half-width">
-                        <span matPrefix>EUR &nbsp;</span>
-                        <input formControlName="FaceToFaceSessionsDayPrice" type="number" matInput placeholder="Price">
-                    </mat-form-field>
-                </div>
-                <mat-form-field class="half-width">
-                  <mat-select formControlName="FaceToFaceSessionsCountry" [(value)]="selected">
-                    <mat-option value="Austria">Austria</mat-option>
-                    <mat-option value="France">France</mat-option>
-                    <mat-option value="Germany">Germany</mat-option>
-                    <mat-option value="Italy">Italy</mat-option>
-                    <mat-option value="Liechtenstein">Liechtenstein</mat-option>
-                    <mat-option value="Slovakia">Slovakia</mat-option>
-                    <mat-option value="Slovenia">Slovenia</mat-option>
-                    <mat-option value="Spain">Spain</mat-option>
-                    <mat-option value="Switzerland">Switzerland</mat-option>
-                    <mat-option value="UK">United Kingdom of Great Britain and Northern Irland</mat-option>
-                    <mat-option value="US">United States of America</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field class="half-width">
-                  <input formControlName="FaceToFaceSessionsZIP" matInput placeholder="ZIP">
-                </mat-form-field>
-                <mat-form-field class="half-width">
-                  <input formControlName="FaceToFaceSessionsCity" matInput placeholder="City *">
-                </mat-form-field>
-                <mat-form-field class="half-width">
-                  <input formControlName="FaceToFaceSessionsAddress" matInput placeholder="Address *">
-                </mat-form-field>
+                
                 <h3 class="full-width--left">My tax settings</h3>
                 <p class="full-width--left">Please indicate the VAT rate that we should display in your invoice. All above entered prices should already include VAT.</p>
                 <mat-form-field class="full-width--left">
                     <span matPrefix>% &nbsp;</span>
-                    <input formControlName="VAT" type="number" matInput placeholder="VAT" [value]="defaultVat">
+                    <input type="number" matInput placeholder="VAT" [value]="defaultVat" [disabled]="Tax">
                 </mat-form-field>
+                <mat-slide-toggle (change)="changeTax()" [color]="color" [checked]="checked" class="full-width--left">I am tax-exempt</mat-slide-toggle>
                 <h2 class="full-width">My cancellation policy</h2> 
                 <p class="full-width">Let us know how you want to handle no-shows or cancellations. But please remember: It's nice to be important, but it's more important to be nice.</p>
                 <span class="half-width">My cancellation policy</span>
@@ -225,8 +138,8 @@
                     <mat-option value="Strict">Strict - 48 hours in advance free of charge, 100% afterwards</mat-option>
                   </mat-select>
                 </mat-form-field>
-                <mat-checkbox formControlName="marketingAllowed" class="full-width--left">Yes, I would like to receive emails with business tips, product news, offers, events and other relevant topics from DerButton. I can revoke this consent at any time.</mat-checkbox>
-                <mat-checkbox formControlName="terms" class="full-width--left">I accept the DerButton <a href="#">terms and conditions</a> and <a href="">data policy</a>.</mat-checkbox>
+                <mat-checkbox [color]="color" formControlName="marketingAllowed" class="full-width--left">Yes, I would like to receive emails with business tips, product news, offers, events and other relevant topics from DerButton. I can revoke this consent at any time.</mat-checkbox>
+                <mat-checkbox [color]="color" formControlName="terms" class="full-width--left">I accept the DerButton <a href="#">terms and conditions</a> and <a href="">data policy</a>.</mat-checkbox>
                 <div class="full-width">
                     <button class="btn btn-lg btn-primary pull-xs-right" [disabled]="!authForm.valid && !appointmentsForm.valid" type="submit">
                         Register

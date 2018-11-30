@@ -127,12 +127,12 @@ function getProfileData(req, res){
 }
 
 function setAvatar(req, res){
-    upload(req,res,function(err){
+    upload(req, res, function(err){
         if(err){
             res.send('Something went wrong, try it again in a few minutes!');
         }    
-        console.log('http://127.0.0.1:8081/'+req.file.path);
-        sql.setAvatar('http://127.0.0.1:8081/'+req.file.path, auth.getTokenFromHeader(req), function (rows) {  
+
+        sql.setAvatar('http://127.0.0.1:8081/'+req.file.path, req.headers.email, function (rows) {  
             if (rows.affectedRows == 1) {
                 res.send('Uploaded successfully!');
             }else{

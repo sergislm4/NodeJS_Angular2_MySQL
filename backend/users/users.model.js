@@ -115,9 +115,9 @@ usersModel.updateUser = function (data, callback){
     }
 };
 
-usersModel.setAvatar = function (avatar, token, callback){
+usersModel.setAvatar = function (avatar, email, callback){
     if(mysql.connection){
-        mysql.connection.query('UPDATE users SET avatar=? WHERE user_id LIKE ?', [avatar, token],
+        mysql.connection.query('UPDATE users SET avatar=? WHERE email=?', [avatar, email],
         function (error, rows){
             if (error){
                 console.log('error');

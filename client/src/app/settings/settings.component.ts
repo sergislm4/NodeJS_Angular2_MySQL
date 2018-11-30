@@ -15,6 +15,7 @@ export class SettingsComponent implements OnInit {
   settingsForm: FormGroup;
   errors: Object = {};
   isSubmitting = false;
+  avatar = "";
 
   constructor(
     private router: Router,
@@ -37,6 +38,8 @@ export class SettingsComponent implements OnInit {
     Object.assign(this.user, this.userService.getCurrentUser());
     // Fill the form
     this.settingsForm.patchValue(this.user);
+    this.avatar = this.user.avatar;
+    
   }
 
   logout() {
