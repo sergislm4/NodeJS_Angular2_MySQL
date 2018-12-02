@@ -17,6 +17,7 @@ export class ProfileComponent implements OnInit {
   profile: Profile;
   currentUser: User;
   isUser: boolean;
+  today: number = Date.now();
 
   ngOnInit() {
     this.route.data.pipe(

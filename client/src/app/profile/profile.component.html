@@ -3,15 +3,26 @@
   <div class="user-info">
     <div>
       <div class="row">
+        <div class="full-width--left">
+          <p>Today is {{today | date}}</p>
+          <p>Or if you prefer, {{today | date:'fullDate'}}</p>
+          <p>The time is {{today | date:'h:mm a z'}}</p>
+        </div>
 
-        <div class="col-xs-12 col-md-10 offset-md-1">
-          <img [src]="profile.avatar" class="user-img" />
-          <h4>{{ profile.first_name }}</h4>
-           <a [routerLink]="['/settings']"
+        <div class="col-md-12 full-width--left">
+          <div class="half-width">
+            <img [src]="profile.avatar" class="user-img" />
+          </div>
+          <div class="half-width">
+            <h4>{{ profile.first_name }}</h4>
+          </div>
+          <div class="full-width--left">
+            <a [routerLink]="['/settings']"
               [hidden]="!isUser"
               class="btn btn-sm btn-outline-secondary action-btn">
               <i class="ion-gear-a"></i> Edit Profile Settings
             </a>
+          </div>
         </div>
 
       </div>
