@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="d-flex flex-grow-1">
+    <span class="w-100 d-lg-none d-block"><!-- hidden spacer to center brand on mobile --></span>
+    <a class="navbar-brand d-none d-lg-inline-block" routerLink="/">DerButton Task</a>
+  </div>
+  <div class="collapse navbar-collapse flex-grow-1 text-right">
+    <!-- Show this for logged out users -->
+    <ul *appShowAuthed="false"
+    class="navbar-nav ml-auto flex-nowrap">
+
+      <li class="nav-item">
+        <a class="nav-link"
+          routerLink="/login"
+          routerLinkActive="active">
+          Sign in
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link"
+          routerLink="/register"
+          routerLinkActive="active">
+          Sign up
+        </a>
+      </li>
+
+    </ul>
+
+    <!-- Show this for logged in users -->
+    <ul *appShowAuthed="true"
+    class="navbar-nav ml-auto flex-nowrap">
+
+      <li class="nav-item">
+        <a class="nav-link"
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }">
+          Home
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link"
+          routerLink="/settings"
+          routerLinkActive="active">
+          <i class="ion-gear-a"></i>&nbsp;Settings
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link"
+          [routerLink]="['/profile', currentUser.user_id]"
+          routerLinkActive="active">
+          {{ currentUser.first_name }}
+        </a>
+      </li>
+
+    </ul>
+
+  </div>
+</nav>

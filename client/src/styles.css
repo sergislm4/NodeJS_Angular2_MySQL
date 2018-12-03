@@ -1,0 +1,128 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+  html {
+    height: 100%;
+  }
+  body { 
+    font-family: Roboto,Helvetica Neue,sans-serif;
+    word-wrap: break-word;
+    box-sizing: inherit;
+    height: 100%;
+    margin: 0;
+  }
+
+  .wrapper{
+    background: url(assets/bg_big.08930cbba28286e491f8.png) no-repeat 0 0,linear-gradient(180deg,#fc3 0,#eb3349) fixed;
+    min-height: 100%;
+    padding: 2% 0 2% 0;
+  }
+
+  .container{
+    min-height: 95%;
+    min-width: 95%;
+    padding: 0 10% 10% 10%;
+    display: block;
+    position: relative;
+    background-color: #fff;
+    border-radius: 15px;
+    -webkit-box-shadow: 0 0 20px -4px #555;
+    box-shadow: 0 0 20px -4px #555;
+  }
+
+  h2 {
+    font-size: 26px;
+  }
+
+  h1, h2 {
+    font-weight: 300;
+    color: #000e5a;
+  }
+  
+  .basic-container {
+    padding: 30px;
+  }
+  
+  .version-info {
+    font-size: 8pt;
+    float: right;
+  }
+
+  .authForm{
+    margin-top: 4%;
+  }
+
+  .half-width {
+    width: 44%;
+    margin-left: 3%;
+    margin-right: 3%;
+  }
+
+  .full-width {
+    margin-top: 4%;
+    width: 94%;
+    margin-left: 3%;
+    margin-right: 3%;
+    text-align: center;
+  }
+
+  .full-width--left {
+    margin-top: 4%;
+    max-width: 100%;
+    width: 100%;
+    text-align: left;
+  }
+
+  .loading,
+  .loading:after,
+  .loading:before {
+    content: ' ';
+
+    top: 0;
+
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+
+    animation: spinner 1600ms infinite ease-in-out;
+  }
+
+  .loading {
+    position: relative;
+
+    margin: 64px auto;
+
+    color: #555;
+
+    animation-delay: -160ms;
+  }
+
+  .loading:after {
+    left: 64px;
+  }
+
+  .loading:before {
+    left: -64px;
+
+    animation-delay: -320ms;
+  }
+
+  .loading:after,
+  .loading:before {
+    position: absolute;
+  }
+  .box-container {
+    box-sizing: border-box;
+    width: 800px;
+    height: 500px;
+    max-width: 90%;
+    max-height: 90%;
+    padding: 24px;
+    margin: 24px auto;
+    border-radius: 4px;
+  
+    color: #555;
+    background-color: #eee;
+    box-shadow:
+      0 6px 20px rgba(0, 0, 0, 0.18),
+      0 6px 6px rgba(0, 0, 0, 0.25);
+  }
