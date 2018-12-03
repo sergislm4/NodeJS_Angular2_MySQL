@@ -100,4 +100,4 @@ Once reached this stage of the developing process, the new functionality should 
 
 Example done with mongo instead of mySQL:
 
-* [NodeJS_Backend](https://gitlab.com/sergislm4/plusone_nodejs_expressjs_angularjs1.5_es6/tree/master/backend) - The frontend framework used
+* [NodeJS_Backend](https://gitlab.com/sergislm4/plusone_nodejs_expressjs_angularjs1.5_es6/tree/master/backend) - The backend framework used
